@@ -1,0 +1,111 @@
+# Get editor completions based on the config schema
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# Main prompt format: Modules on the first line, prompt character on the next
+format = """
+\\[$username\
+[@](bold grey)\
+$hostname\
+$directory\
+\\]\
+$git_branch\
+$git_status\
+$python\
+$golang\
+$rust\
+$nodejs\
+$java\
+$time\
+$character
+"""
+
+# Disable the automatic newline after the prompt
+add_newline = true
+
+
+# Username: Bold white, always shown
+[username]
+show_always = true
+style_user = "bold white"
+style_root = "bold red"  # Red for root user (Kali-style)
+format = "[$user]($style)"
+
+# Hostname: Bold white, always shown
+[hostname]
+ssh_only = false
+style = "bold white"
+format = "[$hostname]($style)"
+
+# Directory: Bold cyan, truncate long paths
+[directory]
+truncation_length = 3
+truncation_symbol = "…/"
+style = "bold cyan"
+format = " [$path]($style)"
+
+# Git Branch: Magenta with branch symbol
+[git_branch]
+symbol = "  "
+style = "bold magenta"
+format = " [$symbol$branch]($style)"
+
+# Git Status: Red for changes, conflicts, etc.
+[git_status]
+style = "bold red"
+format = "[$all_status$ahead_behind]($style) "
+conflicted = "🏳"
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+untracked = "?${count}"
+stashed = "≡"
+modified = "!${count}"
+staged = "+${count}"
+renamed = "»${count}"
+deleted = "✘${count}"
+
+# Language Modules: Minimalist and color-coded
+[python]
+symbol = " "
+style = "bold yellow"
+format = " [$symbol($version)]($style)"
+pyenv_version_name = true
+pyenv_prefix = "venv "
+
+[golang]
+symbol = " "
+style = "bold cyan"
+format = " [$symbol($version)]($style)"
+
+[rust]
+symbol = " "
+style = "bold red"
+format = " [$symbol($version)]($style)"
+
+[nodejs]
+symbol = " "
+style = "bold green"
+format = " [$symbol($version)]($style)"
+
+[java]
+symbol = " "
+style = "bold orange"
+format = " [$symbol($version)]($style)"
+
+# Time Module: Current time in 24-hour format
+[time]
+disabled = false
+format = "\n[ $time]($style) "
+style = "bold white"
+time_format = "%H:%M" 
+
+# Fill module: Ensures the rest of the line is empty before newline
+[fill]
+symbol = " "
+style = "bold white"
+
+# Prompt Character: $ for user, # for root (Kali-style)
+[character]
+success_symbol = "[\\$](bold white) "
+error_symbol = "[\\$](bold red) "
+vicmd_symbol = "[\\:](bold yellow) "
