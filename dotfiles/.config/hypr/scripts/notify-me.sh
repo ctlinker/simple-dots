@@ -1,5 +1,19 @@
 #!/usr/bin/env bash
 
+# Function for hydration and mindfulness
+remember-to-breathe-notify() {
+    while true; do
+        # Sleep first so it doesn't trigger immediately on boot/script start
+        sleep 3600s 
+        
+        notify-send "Self-Care Reminder" \
+            "<b>An hour has elapsed.</b>\n<i>Drink some water, take a deep breath.</i>" \
+            --icon=hint \
+            --urgency=low \
+            --category="health.reminder"
+    done
+}
+
 # Function for fortunes
 daily-fortune-notify() {
     while true; do
@@ -87,11 +101,13 @@ check-usage() {
     done
 }
 
-
-# Notif servers
+# Notifications Services
 daily-fortune-notify & 
 daily-update-notify &
 check-usage &
+remember-to-breathe-notify &
 
+# Notify User of effective service
+notify-send "System Init" "Notification services loaded" --icon=emblem-success
 
 wait # Wait to keep the parent process alive
