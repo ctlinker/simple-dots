@@ -1,5 +1,11 @@
 stow:
-	stow -t ~/ -v -S "dotfiles" 
+	stow -t ~/ -v --stow "dotfiles" 
 
 unstow:
-	stow -t ~/ -v -D "dotfiles"
+	stow -t ~/ -v --delete "dotfiles"
+
+restow:
+	stow -t ~/ -v --restow "dotfiles"
+
+update: unstow stow
+	hyprctl reload
