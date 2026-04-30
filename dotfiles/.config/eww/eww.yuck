@@ -1,0 +1,131 @@
+; (defwindow bar
+  ;   :monitor 0
+  ;   :geometry (geometry
+    ;     :x "0%"
+    ;     :y "0px"
+    ;     :width "100%"
+    ;     :height "35px"
+  ;   :anchor "top center")
+  ;   :stacking "bg"
+  ;   :reserve (struts :distance "80px" :side "top")
+  ;   :exclusive true
+  ;   :wm-ignore false
+  ;   :windowtype "dock"
+  
+  ;   (box
+    ;     :orientation "horizontal"
+    
+    
+    ;     (tools
+      ;       (icon-trigger
+        ;         :icon ""
+      ;         :action "hyprpicker | wl-copy")
+      ;       (icon-trigger
+        ;         :icon "󱣴"
+        ;         :action "grim -g \"$(slurp)\" -t png")
+    ;)
+    
+    ;     (timer)
+    
+    ;     (systray)
+  ;   )
+; )
+
+
+;; Icon Widget - Trigger effect on click
+; (defvar show-tools false)
+; (defwidget tools []
+  ;   (box
+    ;     :orientation "horizontal"
+    ;     (eventbox
+      ;       :onclick "eww update show-tools='${show-tools ? false : true}'"
+      ;       "+"
+    ;     )
+    
+    ;     (revealer
+      ;       :transition "slideleft"
+      ;       :reveal show-tools
+      ;       (children)
+    ;     )
+  ;   )
+; )
+
+
+(defwindow bar
+  :monitor 0
+  :geometry (geometry :x "0%" :y "0px" :width "100%" :height "35px" :anchor "top center")
+  :stacking "fg"
+  :reserve (struts :distance "40px" :side "top") ;; Adjusted distance to match height
+  :exclusive true
+  :windowtype "dock"
+  
+  (box :class "bar-class" :orientation "horizontal" :space-evenly false
+    ;; Left Section
+    (box :halign "start" :hexpand true :space-evenly false
+      (tools
+        (icon-trigger :icon "" :action "hyprpicker | wl-copy")
+        ;; Area Screenshot
+        (icon-trigger
+          :icon "󱣴"
+          :class "white"
+          :action "(grim -g \"$(slurp)\" -t png && notify-send -a 'System' -i 'camera-photo' 'Screenshot' 'Area snapshot taken')")
+        
+        ;; Fullscreen Screenshot
+        (icon-trigger
+          :icon "󰄄"
+          :class "blue"
+          :action "(grim -t png && notify-send -a 'System' -i 'camera-photo' 'Screenshot' 'Full screen snapshot taken')")
+      )
+    )
+    
+    ;; Center Section
+    (box :halign "center" :hexpand true
+      (timer)
+    )
+    
+    ;; Right Section
+    (box :halign "end" :hexpand true :space-evenly false
+      (systray :class "tray" :spacing 10 :orientation "h" :icon-size 18)
+    )
+  )
+)
+
+(defpoll current-date-time
+  :interval "1s"
+  `date "+%A %d %b %Y | %H:%M:%S" | sed "s/\\b./\\U&/g"`
+)
+
+(defwidget timer [] "${current-date-time}")
+
+;; Icon Widget - Trigger effect on click
+(defwidget icon-trigger [?class action icon]
+  (eventbox
+    :class "trigger-btn ${class}"
+  :onclick "${action}" icon)
+)
+
+(defvar show-tools false)
+(defwidget tools []
+  (eventbox :onhover "${EWW_CMD} update show-tools=true"
+    :onhoverlost "${EWW_CMD} update show-tools=false"
+    (box :class "tools-container"
+      :orientation "h"
+      :space-evenly false
+      
+      ;; The Indicator
+      (label :class "trigger-btn"
+      :text {show-tools ? "󰍜" : "󰍟"}) ;; Using Nerd Font icons for a cleaner look
+      
+      (revealer :transition "slideright"
+        :reveal show-tools
+        :duration "300ms"
+        (box :class "tools-content"
+          :orientation "h"
+          :space-evenly false
+          :spacing 10
+          (children)
+        )
+      )
+    )
+  )
+)
