@@ -1,104 +1,134 @@
 /* Something is behind the .bar-class, it's colored in white so this cancel it */
 * {
-  background-color: transparent;
+    background-color: transparent;
 }
 
 /* === Base Bar === */
 .bar-class {
-  background-color: rgba(22, 1, 1, 0.65);
-  color: #e0e0e0; /* Off-white for better contrast */
-  border-bottom: 2px solid #007bff;
-  font-family: "JetBrains Mono", "Symbols Nerd Font", monospace;
-  padding: 4px 8px; /* Slightly more breathing room */
+    background-color: rgba(22, 1, 1, 0.65);
+    color: #e0e0e0; /* Off-white for better contrast */
+    border-bottom: 2px solid #007bff;
+    font-family: "JetBrains Mono", "Symbols Nerd Font", monospace;
+    padding: 4px 8px; /* Slightly more breathing room */
 }
 
 /* === Tools Container === */
 .tools-container {
-  background-color: rgba(18, 18, 18, 0.8); /* Slightly transparent for depth */
-  border: 1px solid #2a2a2a; /* Darker border for subtlety */
-  border-radius: 4px; /* Soft rounded corners */
-  margin: 2px 4px;
-  padding: 2px 6px;
-  transition:
-    border-color 200ms ease,
-    box-shadow 200ms ease,
-    background-color 200ms ease;
+    background-color: rgba(
+        18,
+        18,
+        18,
+        0.8
+    ); /* Slightly transparent for depth */
+    border: 1px solid #2a2a2a; /* Darker border for subtlety */
+    border-radius: 4px; /* Soft rounded corners */
+    margin: 2px 4px;
+    padding: 2px 6px;
+    transition:
+        border-color 200ms ease,
+        box-shadow 200ms ease,
+        background-color 200ms ease;
 }
 
 /* Hover effect: Glow + subtle background change */
 .tools-container:hover {
-  border-color: #007bff;
-  box-shadow:
-    0 0 8px rgba(0, 123, 255, 0.2),
-    inset 0 0 4px rgba(0, 123, 255, 0.05);
-  background-color: rgba(18, 18, 18, 0.9);
+    border-color: #007bff;
+    box-shadow:
+        0 0 8px rgba(0, 123, 255, 0.2),
+        inset 0 0 4px rgba(0, 123, 255, 0.05);
+    background-color: rgba(18, 18, 18, 0.9);
 }
 
 /* === Trigger Button === */
 .trigger-btn {
-  color: #007bff;
-  font-size: 1.1rem;
-  margin: 0 2px;
-  padding: 2px 4px;
-  transition: color 200ms ease;
+    color: #007bff;
+    font-size: 1.1rem;
+    margin: 0 2px;
+    padding: 2px 4px;
+    transition: color 200ms ease;
 }
 
 .trigger-btn:hover {
-  color: #4da6ff; /* Lighter blue on hover */
+    color: #4da6ff; /* Lighter blue on hover */
 }
 
 /* Trigger button inside tools-container (revealed state) */
 .tools-container .trigger-btn {
-  color: #a0a0a0; /* Muted white for inactive state */
+    color: #a0a0a0; /* Muted white for inactive state */
 }
 
 .tools-container .trigger-btn:hover {
-  color: #007bff;
+    color: #007bff;
 }
 
 /* === Tools Content === */
 .tools-content {
-  padding: 0 8px;
-  border-left: 1px solid #2a2a2a; /* Subtle separator */
+    padding: 0 8px;
+    border-left: 1px solid #2a2a2a; /* Subtle separator */
 }
 
 /* === Timer === */
 .timer-class {
-  color: #e0e0e0;
-  font-weight: 600; /* Semi-bold for emphasis */
-  font-size: 0.95rem;
+    color: #e0e0e0;
+    font-weight: 600; /* Semi-bold for emphasis */
+    font-size: 0.95rem;
 }
 
 /* === System Tray === */
 .tray {
-  margin: 0 4px;
-  padding: 2px;
+    margin: 0 4px;
+    padding: 2px;
 }
 
 /* Target the actual pop-up menu window */
 .tray menu {
-  background-color: #000000; /* Solid black to ensure readability */
-  border: 1px solid #007bff; /* Blue border to match your bar */
-  border-radius: 8px;
-  padding: 5px;
-  color: #ffffff;
+    background-color: #000000; /* Solid black to ensure readability */
+    border: 1px solid #007bff; /* Blue border to match your bar */
+    border-radius: 8px;
+    padding: 5px;
+    color: #ffffff;
 }
 
 /* Target the individual items in the tray menu */
 .tray menuitem {
-  padding: 4px 10px;
-  border-radius: 4px;
-  color: #ffffff;
+    padding: 4px 10px;
+    border-radius: 4px;
+    color: #ffffff;
 }
 
 /* Hover effect for the menu items */
 .tray menuitem:hover {
-  background-color: #007bff; /* Blue background on hover */
-  color: #ffffff;
+    background-color: #007bff; /* Blue background on hover */
+    color: #ffffff;
 }
 
 /* Arrow/Separator styling */
 .tray separator {
-  background-color: #333333;
-  margin: 4px 0;
+    background-color: #333333;
+    margin: 4px 0;
+}
+.launcher-scroll scrollbar {
+    opacity: 0;
+    min-width: 0;
+    min-height: 0;
+}
+
+.net-box {
+    padding: 2px;
+}
+
+.launcher-scroll {
+    padding: 10px;
+    padding-top: 40px ;
+    border-left: 2px solid #007bff;
+}
+
+.app-btn {
+    background: none;
+    border: none;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+.app-btn:hover {
+    background-color: rgba(137, 180, 250, 0.2);
 }

@@ -1,64 +1,12 @@
-; (defwindow bar
-  ;   :monitor 0
-  ;   :geometry (geometry
-    ;     :x "0%"
-    ;     :y "0px"
-    ;     :width "100%"
-    ;     :height "35px"
-  ;   :anchor "top center")
-  ;   :stacking "bg"
-  ;   :reserve (struts :distance "80px" :side "top")
-  ;   :exclusive true
-  ;   :wm-ignore false
-  ;   :windowtype "dock"
-  
-  ;   (box
-    ;     :orientation "horizontal"
-    
-    
-    ;     (tools
-      ;       (icon-trigger
-        ;         :icon ""
-      ;         :action "hyprpicker | wl-copy")
-      ;       (icon-trigger
-        ;         :icon "󱣴"
-        ;         :action "grim -g \"$(slurp)\" -t png")
-    ;)
-    
-    ;     (timer)
-    
-    ;     (systray)
-  ;   )
-; )
-
-
-;; Icon Widget - Trigger effect on click
-; (defvar show-tools false)
-; (defwidget tools []
-  ;   (box
-    ;     :orientation "horizontal"
-    ;     (eventbox
-      ;       :onclick "eww update show-tools='${show-tools ? false : true}'"
-      ;       "+"
-    ;     )
-    
-    ;     (revealer
-      ;       :transition "slideleft"
-      ;       :reveal show-tools
-      ;       (children)
-    ;     )
-  ;   )
-; )
-
-
 (defwindow bar
   :monitor 0
-  :geometry (geometry :x "0%" :y "0px" :width "100%" :height "35px" :anchor "top center")
+  :geometry (geometry 
+    :x "0%" :y "0%" :width "100%" :height "35px" :anchor "top center")
   :stacking "fg"
-  :reserve (struts :distance "40px" :side "top") ;; Adjusted distance to match height
+  :reserve (struts :distance "0px" :side "top") ;; Adjusted distance to match height
   :exclusive true
   :windowtype "dock"
-  
+
   (box :class "bar-class" :orientation "horizontal" :space-evenly false
     ;; Left Section
     (box :halign "start" :hexpand true :space-evenly false
@@ -69,26 +17,39 @@
           :icon "󱣴"
           :class "white"
           :action "(grim -g \"$(slurp)\" -t png && notify-send -a 'System' -i 'camera-photo' 'Screenshot' 'Area snapshot taken')")
-        
+
         ;; Fullscreen Screenshot
         (icon-trigger
           :icon "󰄄"
           :class "blue"
           :action "(grim -t png && notify-send -a 'System' -i 'camera-photo' 'Screenshot' 'Full screen snapshot taken')")
-      )
-    )
-    
+      )        
+    )      
+    (network_info)
+
     ;; Center Section
     (box :halign "center" :hexpand true
       (timer)
     )
-    
+
     ;; Right Section
     (box :halign "end" :hexpand true :space-evenly false
       (systray :class "tray" :spacing 10 :orientation "h" :icon-size 18)
     )
   )
 )
+
+;; Network Poll
+(defpoll net_speed :interval "2s" "~/.config/eww/scripts/net.sh")
+
+;; A Simple Widget to display it
+(defwidget network_info []
+  (box :class "net-box"
+       :orientation "v"
+       :space-evenly false
+       "↑↓ ${net_speed.tx}/${net_speed.rx} KiB/s"
+       )
+  )
 
 (defpoll current-date-time
   :interval "1s"
@@ -111,11 +72,11 @@
     (box :class "tools-container"
       :orientation "h"
       :space-evenly false
-      
+
       ;; The Indicator
       (label :class "trigger-btn"
       :text {show-tools ? "󰍜" : "󰍟"}) ;; Using Nerd Font icons for a cleaner look
-      
+
       (revealer :transition "slideright"
         :reveal show-tools
         :duration "300ms"
@@ -129,3 +90,40 @@
     )
   )
 )
+
+;; Variables
+(defpoll app_list :interval "1h" "~/.config/eww/scripts/launcher-bk.sh")
+
+;; The Bar Window
+(defwindow launcher_bar
+  :monitor 0
+  :geometry (geometry :x "0%"
+                     :y "0px"
+                     :width "80px"
+                     :height "100%"
+                     :anchor "left center")
+  :stacking "fg"
+  :exclusive true
+  (launcher_content))
+
+;; The Content
+(defwidget launcher_content []
+  (scroll :vscroll true
+          :hscroll false
+          :class "launcher-scroll"
+    (box :orientation "vertical"
+         :spacing 10
+         :class "launcher-box"
+      (for app in app_list
+        (app_button :name {app.name}
+                    :icon {app.icon_path}
+                    :path {app.desktop_path})))))
+
+;; Individual App Button
+(defwidget app_button [name icon path]
+  (button :class "app-btn"
+          :onclick "dex ${path} &"
+          :tooltip name
+    (image :path {icon != "" ? icon : "/usr/share/icons/hicolor/scalable/apps/system-help.svg"}
+           :image-width 48
+           :image-height 48)))
