@@ -1,129 +1,136 @@
-(defwindow bar
+;; 1. TOP BAR WINDOW
+(defwindow top_bar
   :monitor 0
-  :geometry (geometry 
-    :x "0%" :y "0%" :width "100%" :height "35px" :anchor "top center")
+  :geometry (geometry :x "0px"
+                      :y "0px"
+                      :width "100%"
+                      :height "40px"
+                      :anchor "top center")
   :stacking "fg"
-  :reserve (struts :distance "0px" :side "top") ;; Adjusted distance to match height
   :exclusive true
-  :windowtype "dock"
+  :focusable false
+  (bar_content))
 
-  (box :class "bar-class" :orientation "horizontal" :space-evenly false
-    ;; Left Section
-    (box :halign "start" :hexpand true :space-evenly false
+(defwidget bar_content []
+  (box :class "bar-class" 
+       :orientation "horizontal" 
+       :space-evenly true
+       :hexpand true
+    
+    ;; Left Section: Tools, Network, CPU & RAM
+    (box :halign "start" 
+         :space-evenly false 
+         :spacing 15       
+         :class "left-modules"
       (tools
         (icon-trigger :icon "" :action "hyprpicker | wl-copy")
-        ;; Area Screenshot
         (icon-trigger
           :icon "󱣴"
           :class "white"
           :action "(grim -g \"$(slurp)\" -t png && notify-send -a 'System' -i 'camera-photo' 'Screenshot' 'Area snapshot taken')")
-
-        ;; Fullscreen Screenshot
         (icon-trigger
           :icon "󰄄"
           :class "blue"
           :action "(grim -t png && notify-send -a 'System' -i 'camera-photo' 'Screenshot' 'Full screen snapshot taken')")
       )        
+      (network_info)
+      (sys_resources) ;; <--- Added System Stats here
     )      
-    (network_info)
 
-    ;; Center Section
-    (box :halign "center" :hexpand true
+    ;; Center Section: Clock
+    (box :halign "center" 
+         :class "center-modules"
       (timer)
     )
 
-    ;; Right Section
-    (box :halign "end" :hexpand true :space-evenly false
-      (systray :class "tray" :spacing 10 :orientation "h" :icon-size 18)
+    ;; Right Section: System Tray
+    (box :halign "end" 
+         :space-evenly false
+         :class "right-modules"
+      (systray :class "tray" :spacing 12 :orientation "h" :icon-size 18)
     )
   )
 )
 
-;; Network Poll
-(defpoll net_speed :interval "2s" "~/.config/eww/scripts/net.sh")
-
-;; A Simple Widget to display it
-(defwidget network_info []
-  (box :class "net-box"
-       :orientation "v"
+;; New CPU & RAM Stats Widget
+(defwidget sys_resources []
+  (box :class "sys-box"
+       :orientation "h"
        :space-evenly false
-       "↑↓ ${net_speed.tx}/${net_speed.rx} KiB/s"
-       )
+       :spacing 12
+       :valign "center"
+    
+    ;; CPU Module (Uses native EWW magic variable)
+    (box :class "cpu-box" :space-evenly false :spacing 4
+      (label :class "sys-icon cpu-icon" :text "")
+      (label :class "sys-text" :text "${round(EWW_CPU.avg, 0)}%"))
+    
+    ;; RAM Module (Uses native EWW magic variable)
+    (box :class "ram-box" :space-evenly false :spacing 4
+      (label :class "sys-icon ram-icon" :text "")
+      (label :class "sys-text" :text "${round(EWW_RAM.used_mem_perc, 0)}%"))
   )
-
-(defpoll current-date-time
-  :interval "1s"
-  `date "+%A %d %b %Y | %H:%M:%S" | sed "s/\\b./\\U&/g"`
 )
 
-(defwidget timer [] "${current-date-time}")
+;; Network Info
+(defpoll net_speed :interval "1s" "~/.config/eww/scripts/net.sh")
 
-;; Icon Widget - Trigger effect on click
+(defwidget network_info []
+  (box :class "net-box"
+       :orientation "h"      
+       :space-evenly false
+       :valign "center"
+       :spacing 6
+    (label :class "net-icon" :text "󰛴")
+    (label :class "net-text" :text "↑${net_speed.tx}↓${net_speed.rx} Kb/s")
+  )
+)
+
+;; Date-Time
+(defpoll current-date-time
+  :interval "1s"
+  `date "+%A %d %b %Y  │  %H:%M:%S"`
+)
+
+(defwidget timer [] 
+  (label :class "timer-label"
+         :text "${current-date-time}" 
+         :valign "center")
+)
+
+;; Icon Widget
 (defwidget icon-trigger [?class action icon]
   (eventbox
     :class "trigger-btn ${class}"
-  :onclick "${action}" icon)
+    :onclick "${action}" 
+    :cursor "pointer"        
+    (label :text icon :valign "center"))
 )
 
+;; Tools Revealer
 (defvar show-tools false)
 (defwidget tools []
   (eventbox :onhover "${EWW_CMD} update show-tools=true"
-    :onhoverlost "${EWW_CMD} update show-tools=false"
+            :onhoverlost "${EWW_CMD} update show-tools=false"
     (box :class "tools-container"
-      :orientation "h"
-      :space-evenly false
+         :orientation "h"
+         :space-evenly false
+         :valign "center"
+         :spacing 8
 
-      ;; The Indicator
-      (label :class "trigger-btn"
-      :text {show-tools ? "󰍜" : "󰍟"}) ;; Using Nerd Font icons for a cleaner look
+      (label :class "trigger-btn tools-indicator"
+             :text {show-tools ? "󰍜" : "󰍟"}) 
 
       (revealer :transition "slideright"
-        :reveal show-tools
-        :duration "300ms"
+                :reveal show-tools
+                :duration "250ms"
         (box :class "tools-content"
-          :orientation "h"
-          :space-evenly false
-          :spacing 10
+             :orientation "h"
+             :space-evenly false
+             :spacing 12
           (children)
         )
       )
     )
   )
 )
-
-;; Variables
-(defpoll app_list :interval "1h" "~/.config/eww/scripts/launcher-bk.sh")
-
-;; The Bar Window
-(defwindow launcher_bar
-  :monitor 0
-  :geometry (geometry :x "0%"
-                     :y "0px"
-                     :width "80px"
-                     :height "100%"
-                     :anchor "left center")
-  :stacking "fg"
-  :exclusive true
-  (launcher_content))
-
-;; The Content
-(defwidget launcher_content []
-  (scroll :vscroll true
-          :hscroll false
-          :class "launcher-scroll"
-    (box :orientation "vertical"
-         :spacing 10
-         :class "launcher-box"
-      (for app in app_list
-        (app_button :name {app.name}
-                    :icon {app.icon_path}
-                    :path {app.desktop_path})))))
-
-;; Individual App Button
-(defwidget app_button [name icon path]
-  (button :class "app-btn"
-          :onclick "dex ${path} &"
-          :tooltip name
-    (image :path {icon != "" ? icon : "/usr/share/icons/hicolor/scalable/apps/system-help.svg"}
-           :image-width 48
-           :image-height 48)))

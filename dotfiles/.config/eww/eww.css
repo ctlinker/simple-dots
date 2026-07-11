@@ -3,6 +3,14 @@
     background-color: transparent;
 }
 
+.shell-class {
+    color: #e0e0e0; /* Off-white for better contrast */
+    font-family: "JetBrains Mono", "Symbols Nerd Font", monospace;
+    font-size: 0.9rem;
+    padding: 2px 4px;
+    border: 4px solid #007bff; /* Blue border for emphasis */
+}
+
 /* === Base Bar === */
 .bar-class {
     background-color: rgba(22, 1, 1, 0.65);
@@ -119,7 +127,6 @@
 
 .launcher-scroll {
     padding: 10px;
-    padding-top: 40px ;
     border-left: 2px solid #007bff;
 }
 
